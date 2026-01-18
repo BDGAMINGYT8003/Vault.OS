@@ -385,22 +385,23 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Standard Header Content */}
-        <div className={`absolute inset-0 flex items-center justify-between px-6 transition-all duration-500 ease-out
+        <div className={`absolute inset-0 flex items-center justify-between px-4 md:px-6 transition-all duration-500 ease-out
             ${isSearchMode ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}
         `}>
-            <div className="flex items-center space-x-3">
-              <i className="fas fa-shield-alt text-vault-accent text-xl"></i>
-              <h1 className="text-xl font-bold font-mono tracking-wider text-white">VAULT<span className="text-vault-accent">.OS</span></h1>
+            {/* Logo */}
+            <div className="flex items-center space-x-2 md:space-x-3 shrink-0">
+              <i className="fas fa-shield-alt text-vault-accent text-lg md:text-xl"></i>
+              <h1 className="text-lg md:text-xl font-bold font-mono tracking-wider text-white">VAULT<span className="text-vault-accent">.OS</span></h1>
             </div>
             
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
                
                {/* Search Trigger (Hidden in Select Mode) */}
                {!isSelectMode && (
                  <button 
                    onClick={toggleSearchMode}
                    onMouseEnter={() => sensory.playHover()}
-                   className="w-10 h-10 md:w-auto md:px-4 md:py-2 flex items-center justify-center space-x-2 rounded-lg bg-transparent text-gray-400 border border-transparent hover:text-vault-accent hover:bg-vault-800 transition-all duration-300"
+                   className="w-10 h-10 md:w-auto md:px-4 md:py-2 flex items-center justify-center space-x-0 md:space-x-2 rounded-lg bg-transparent text-gray-400 border border-transparent hover:text-vault-accent hover:bg-vault-800 transition-all duration-300"
                    title="Search Vault"
                  >
                     <i className="fas fa-search text-lg"></i>
@@ -412,7 +413,7 @@ const Dashboard: React.FC = () => {
                <button 
                  onClick={toggleSelectMode}
                  onMouseEnter={() => sensory.playHover()}
-                 className={`w-10 h-10 md:w-auto md:px-4 md:py-2 flex items-center justify-center space-x-2 rounded-lg transition-all duration-300 border
+                 className={`w-10 h-10 md:w-auto md:px-4 md:py-2 flex items-center justify-center space-x-0 md:space-x-2 rounded-lg transition-all duration-300 border
                    ${isSelectMode 
                      ? 'bg-vault-800 text-gray-400 border-vault-600 hover:text-white hover:border-white' 
                      : 'bg-transparent text-gray-400 border-transparent hover:text-vault-accent hover:bg-vault-800'
@@ -436,7 +437,7 @@ const Dashboard: React.FC = () => {
                         fileInputRef.current?.click();
                      }}
                      onMouseEnter={() => sensory.playHover()}
-                     className="flex items-center space-x-2 bg-vault-800 hover:bg-vault-700 border border-vault-600 hover:border-vault-accent text-white px-4 py-2 rounded-lg transition-all text-sm font-mono uppercase tracking-wide justify-center"
+                     className="w-10 h-10 md:w-auto md:px-4 md:py-2 flex items-center justify-center space-x-0 md:space-x-2 bg-vault-800 hover:bg-vault-700 border border-vault-600 hover:border-vault-accent text-white rounded-lg transition-all text-sm font-mono uppercase tracking-wide"
                      disabled={uploading}
                      title="Upload Files"
                    >
@@ -445,8 +446,8 @@ const Dashboard: React.FC = () => {
                      ) : (
                        <i className="fas fa-plus text-vault-accent"></i>
                      )}
-                     {/* Explicitly visible text on all screens */}
-                     <span className="ml-2 whitespace-nowrap">{uploading ? 'Processing' : 'UPLOAD'}</span>
+                     {/* Text hidden on mobile to prevent overflow */}
+                     <span className="hidden md:inline whitespace-nowrap">{uploading ? 'Processing' : 'UPLOAD'}</span>
                    </button>
                  </div>
 
