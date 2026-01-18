@@ -24,6 +24,9 @@ const FileThumbnail = React.memo(({
 }: FileThumbnailProps) => {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
+  // Determine if this is a visual media file that covers the background
+  const isMedia = file.type.startsWith('image/') || file.type.startsWith('video/');
+
   useEffect(() => {
     const url = URL.createObjectURL(file.data);
     setObjectUrl(url);
@@ -57,39 +60,42 @@ const FileThumbnail = React.memo(({
     }
   };
 
-  const renderContent = () => {
+  const renderBackgroundContent = () => {
     if (!objectUrl) return <div className="bg-vault-800 h-full w-full animate-pulse" />;
 
-    if (file.type.startsWith('image/')) {
-      return (
-        <img 
-          src={objectUrl} 
-          alt={file.name} 
-          className={`w-full h-full object-cover transition-transform duration-500 ${isSelectMode ? 'scale-100' : 'group-hover:scale-105'}`}
-          loading="lazy"
-        />
-      );
-    } else if (file.type.startsWith('video/')) {
-      return (
-        <video 
-          src={objectUrl} 
-          className="w-full h-full object-cover" 
-          muted 
-          loop 
-          onMouseOver={e => {
-            if (!isSelectMode) {
-              e.currentTarget.play();
-              sensory.playHover();
-            }
-          }} 
-          onMouseOut={e => e.currentTarget.pause()}
-        />
-      );
+    if (isMedia) {
+      if (file.type.startsWith('image/')) {
+        return (
+          <img 
+            src={objectUrl} 
+            alt={file.name} 
+            className={`w-full h-full object-cover transition-transform duration-500 ${isSelectMode ? 'scale-100' : 'group-hover:scale-105'}`}
+            loading="lazy"
+          />
+        );
+      } else {
+        return (
+          <video 
+            src={objectUrl} 
+            className="w-full h-full object-cover" 
+            muted 
+            loop 
+            onMouseOver={e => {
+              if (!isSelectMode) {
+                e.currentTarget.play();
+                sensory.playHover();
+              }
+            }} 
+            onMouseOut={e => e.currentTarget.pause()}
+          />
+        );
+      }
     } else {
+      // Generic File Icon - Centered
       return (
-        <div className="flex flex-col items-center justify-center h-full bg-vault-800 text-vault-600 group-hover:text-vault-accent transition-colors">
-          <i className="fas fa-file-alt text-4xl mb-2"></i>
-          <span className="text-xs px-2 text-center truncate w-full">{file.name}</span>
+        <div className="flex flex-col items-center justify-center h-full bg-vault-800 text-vault-600 transition-colors pointer-events-none">
+          <i className="fas fa-file-alt text-4xl mb-2 group-hover:text-vault-accent/50 transition-colors duration-300"></i>
+          {/* Note: Filename removed from here to handle via Morphing Text layer */}
         </div>
       );
     }
@@ -106,11 +112,32 @@ const FileThumbnail = React.memo(({
       onClick={handleClick}
       onMouseEnter={() => sensory.playHover()}
     >
-      {renderContent()}
+      {renderBackgroundContent()}
+
+      {/* 
+         Morphing Text Layer (Generic Files Only) 
+         - Idle: Centered under icon
+         - Hover: Slides to bottom-left with accent bar
+      */}
+      {!isMedia && !isSelectMode && (
+         <div className={`
+            absolute w-full px-3 transition-all duration-300 ease-out pointer-events-none z-10
+            bottom-1/2 translate-y-8
+            group-hover:bottom-0 group-hover:translate-y-0 group-hover:pb-3
+         `}>
+            <p className={`
+               text-xs truncate transition-all duration-300
+               text-center text-vault-600
+               group-hover:text-left group-hover:text-white group-hover:border-l-2 group-hover:border-vault-accent group-hover:pl-2
+            `}>
+              {file.name}
+            </p>
+         </div>
+      )}
       
       {/* Selection Overlay Indicator */}
       {isSelectMode && (
-        <div className={`absolute inset-0 transition-colors duration-200 flex items-center justify-center
+        <div className={`absolute inset-0 transition-colors duration-200 flex items-center justify-center z-20
           ${isSelected ? 'bg-vault-accent/20' : 'bg-transparent hover:bg-white/5'}
         `}>
           {isSelected && (
@@ -123,9 +150,12 @@ const FileThumbnail = React.memo(({
       
       {/* Default Overlay Actions (Only visible if NOT in select mode) */}
       {!isSelectMode && (
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3 pointer-events-none group-hover:pointer-events-auto">
+        <div className={`
+            absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3 pointer-events-none group-hover:pointer-events-auto z-20
+            ${isMedia ? 'bg-gradient-to-b from-black/80 via-transparent to-black/90' : ''}
+        `}>
             
-            {/* Top Right Actions */}
+            {/* Top Right Actions - Consistent across all types */}
             <div className="flex justify-end space-x-2">
               <button 
                 onClick={handleDownload}
@@ -148,12 +178,14 @@ const FileThumbnail = React.memo(({
               </button>
             </div>
 
-            {/* Bottom Left Filename */}
-            <div className="w-full">
-               <p className="text-white text-xs font-mono truncate border-l-2 border-vault-accent pl-2 leading-tight">
-                 {file.name}
-               </p>
-            </div>
+            {/* Bottom Left Filename - ONLY for Media files (Generic files use the Morphing Text layer) */}
+            {isMedia && (
+              <div className="w-full">
+                 <p className="text-white text-xs font-mono truncate border-l-2 border-vault-accent pl-2 leading-tight shadow-black drop-shadow-md">
+                   {file.name}
+                 </p>
+              </div>
+            )}
         </div>
       )}
     </div>
