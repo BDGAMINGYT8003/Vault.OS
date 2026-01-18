@@ -499,12 +499,12 @@ const Dashboard: React.FC = () => {
             <p className="font-mono">Decrypting Storage...</p>
           </div>
         ) : filteredFiles.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-600 border-2 border-dashed border-vault-700 rounded-xl">
+          <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 text-center text-gray-600 border-2 border-dashed border-vault-700 rounded-xl">
              {searchQuery ? (
                 <>
                    <i className="fas fa-search-minus text-5xl mb-4 text-vault-600"></i>
                    <p className="font-mono mb-2">NO MATCHES FOUND</p>
-                   <p className="text-sm text-gray-500">Search criteria yielded 0 matches in secure storage.</p>
+                   <p className="text-sm text-gray-500 max-w-xs mx-auto">Search criteria yielded 0 matches in secure storage.</p>
                 </>
              ) : (
                 <>
